@@ -1,18 +1,14 @@
 //supabase import
-import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
 import {
-  useUser,
-  useSupabaseClient,
-  Session,
+  Session, useSupabaseClient, useUser
 } from '@supabase/auth-helpers-react';
-import { useEffect, useState } from 'react';
 import CopyToClipboard from '../copy-to-clipboard';
 
 const HomePage = ({ session }: { session: Session }) => {
   const supabase = useSupabaseClient();
   const user = useUser();
-  const [username, setUsername] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+
+
 
   // get profiles
   async function getProfile() {
@@ -43,17 +39,11 @@ const HomePage = ({ session }: { session: Session }) => {
     supabase.auth.signOut();
   };
 
-  useEffect(() => {
-    getProfile();
-  }, [session]);
-
-  if (loading) return <>loading...</>;
-
   return (
     <div className='flex flex-col min-w-full min-h-screen p-4'>
       <div className='bg-[#BCEAD5] min-h-full rounded-md p-4 space-y-4'>
         <h1 className='text-center'>Copy this link below :</h1>
-        <CopyToClipboard />
+        <CopyToClipboard userId={user?.id} />
       </div>
 
       <button onClick={handleLogout} className='bg-red color-white p-4'>
