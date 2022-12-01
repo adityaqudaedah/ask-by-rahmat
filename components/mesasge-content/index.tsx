@@ -2,8 +2,15 @@ import React from 'react';
 
 const MessageContent = () => {
   return (
-    <div>
-      <textarea id='w3review' name='w3review' rows={4} cols={50} defaultValue='message goes here...'/>
+    <div className='min-w-full text-center'>
+      <textarea
+        className='rounded-md p-4 text-gray-500'
+        id='message'
+        name='message'
+        rows={4}
+        cols={50}
+        defaultValue='message goes here...'
+      />
     </div>
   );
 };

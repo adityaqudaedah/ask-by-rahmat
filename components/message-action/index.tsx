@@ -2,9 +2,15 @@ import React from 'react';
 
 const MessageAction = () => {
   return (
-    <div>
-      <button className='bg-blue-500 color-white'> submit </button>
-    </div>
+    <>
+      <button
+        type='submit'
+        className='text-center p-2 rounded-full hover:bg-cyan-600 bg-cyan-500 w-60 text-white'
+      >
+        {' '}
+        SUBMIT{' '}
+      </button>
+    </>
   );
 };
 
