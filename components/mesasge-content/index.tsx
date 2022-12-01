@@ -9,7 +9,7 @@ const MessageContent = () => {
         name='message'
         rows={4}
         cols={50}
-        defaultValue='message goes here...'
+        placeholder='message goes here...'
       />
     </div>
   );

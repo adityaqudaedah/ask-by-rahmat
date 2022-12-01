@@ -59,11 +59,30 @@ const QuestionPage: NextPage = () => {
     }
   };
 
+  // post content
+  const postContent = async (message: string) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([{ post_owner_id: id, message }]);
+
+      if (error) {
+        console.log(error);
+      }
+    } catch (error: any) {
+      throw new Error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOnSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const target = e.target as typeof e.target & {
       message: { value: string };
     };
+    postContent(target.message.value);
   };
 
   useEffect(() => {
@@ -72,14 +91,14 @@ const QuestionPage: NextPage = () => {
     }
   }, [id]);
 
-  if (loading) return <div>loading...</div>;
+  if (loading || !name) return <div>loading...</div>;
 
   return (
     <Layout>
       <Message handleSubmit={handleOnSubmit}>
-        <MeassageHeader name={name ?? 'anon'} />
+        <MeassageHeader name={name ?? 'unknown'} />
         <MessageContent />
-        <MessageAction />
+        <MessageAction loading={loading} />
       </Message>
     </Layout>
   );
