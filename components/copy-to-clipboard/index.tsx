@@ -1,6 +1,10 @@
 import React, { ReactNode } from 'react';
 
-const CopyToClipboard: React.FC<{ userId: string }> = ({ userId }) => {
+interface IUser{
+  userId:string
+}
+
+const CopyToClipboard: React.FC<IUser> = ({ userId }) => {
   return (
     <div className='flex flex-row w-full p-2 bg-white rounded-md'>
       <div className='flex grow'>

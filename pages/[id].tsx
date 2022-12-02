@@ -1,4 +1,8 @@
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import {
+  useSession,
+  useSupabaseClient,
+  useUser,
+} from '@supabase/auth-helpers-react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -7,9 +11,11 @@ import MessageContent from '../components/mesasge-content';
 import Message from '../components/message';
 import MessageAction from '../components/message-action';
 import MeassageHeader from '../components/message-header';
+import TimeLine from '../components/timeline';
 
 const QuestionPage: NextPage = () => {
   const supabase = useSupabaseClient();
+  const session = useSession();
   const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>();
   const user = useUser();
@@ -17,10 +23,6 @@ const QuestionPage: NextPage = () => {
   const {
     query: { id },
   } = router;
-
-  if (user) {
-    router.push('/');
-  }
 
   //get username
   const getName = async () => {
@@ -95,11 +97,14 @@ const QuestionPage: NextPage = () => {
 
   return (
     <Layout>
-      <Message handleSubmit={handleOnSubmit}>
-        <MeassageHeader name={name ?? 'unknown'} />
-        <MessageContent />
-        <MessageAction loading={loading} />
-      </Message>
+      {!session && (
+        <Message handleSubmit={handleOnSubmit}>
+          <MeassageHeader name={name ?? 'unknown'} />
+          <MessageContent />
+          <MessageAction loading={loading} />
+        </Message>
+      )}
+      <TimeLine />
     </Layout>
   );
 };
