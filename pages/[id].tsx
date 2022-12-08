@@ -16,6 +16,7 @@ import TimeLine from '../components/timeline';
 const QuestionPage: NextPage = () => {
   const supabase = useSupabaseClient();
   const session = useSession();
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>();
   const user = useUser();
@@ -51,13 +52,24 @@ const QuestionPage: NextPage = () => {
   };
 
   // get contents
-  const getContents = async () => {
+  const getPost = async () => {
     try {
-      const { data, error } = await supabase.from('posts').select('*');
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('post_owner_id', id);
 
-      console.log('ggmu', data);
+      if (data) {
+        setPosts(data);
+      }
+      if (error) {
+        console.log(error);
+      }
     } catch (error: any) {
       throw new Error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,10 +102,16 @@ const QuestionPage: NextPage = () => {
   useEffect(() => {
     if (id) {
       getName();
+      getPost();
     }
   }, [id]);
 
-  if (loading || !name) return <div>loading...</div>;
+  if (loading || !name)
+    return (
+      <Layout>
+        <h1 className='font-semibold text-md text-gray-500'>Loading...</h1>
+      </Layout>
+    );
 
   return (
     <Layout>
@@ -104,7 +122,7 @@ const QuestionPage: NextPage = () => {
           <MessageAction loading={loading} />
         </Message>
       )}
-      <TimeLine />
+      <TimeLine posts={posts} />
     </Layout>
   );
 };

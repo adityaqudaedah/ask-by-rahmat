@@ -4,7 +4,7 @@ const MessageContent = () => {
   return (
     <div className='min-w-full text-center'>
       <textarea
-        className='rounded-md p-4 text-gray-500'
+        className='rounded-md p-4 text-gray-500 shadow-md'
         id='message'
         name='message'
         rows={4}

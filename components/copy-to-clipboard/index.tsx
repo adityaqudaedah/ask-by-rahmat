@@ -1,18 +1,37 @@
-import React, { ReactNode } from 'react';
+import React, { useState, useRef } from 'react';
+import { copyTextToClipboard } from '../../helpers/CopyTextToClipBoard';
 
-interface IUser{
-  userId:string
+interface IUser {
+  userId: string;
 }
 
 const CopyToClipboard: React.FC<IUser> = ({ userId }) => {
+  const [copied, setCopied] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleCopyText = () => {
+    copyTextToClipboard(inputRef?.current?.value)
+      .then(() => setTimeout(() => setCopied(true), 250))
+      .catch((error) => {
+        throw new Error(error);
+      });
+  };
   return (
     <div className='flex flex-row w-full p-2 bg-white rounded-md'>
       <div className='flex grow'>
-        <p className='text-slate-500'>{`${process.env.NEXT_PUBLIC_LOCAL_URL}/${userId}`}</p>
+        <input
+          ref={inputRef}
+          className='text-slate-500 w-full focus:outline-none'
+          readOnly
+          value={`${process.env.NEXT_PUBLIC_LOCAL_URL}/${userId}`}
+        />
       </div>
 
-      <div className='flex grow-0 bg-[#DEF5E5] rounded-md px-3'>
-        <button className='text-slate-800'>copy</button>
+      <div className='flex grow-0 bg-[#DEF5E5] rounded-md px-3 py-1 hover:bg-[#BCEAD5] hover:cursor-pointer '>
+        <button onClick={handleCopyText}>
+          <span className='text-slate-500 m-auto'>
+            {copied ? 'copied' : 'copy'}
+          </span>
+        </button>
       </div>
     </div>
   );
