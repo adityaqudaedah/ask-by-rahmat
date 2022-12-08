@@ -4,6 +4,7 @@ import {
   useSupabaseClient,
   useUser,
 } from '@supabase/auth-helpers-react';
+import Link from 'next/link';
 import CopyToClipboard from '../copy-to-clipboard';
 
 const HomePage = ({ session }: { session: Session }) => {
@@ -41,7 +42,12 @@ const HomePage = ({ session }: { session: Session }) => {
 
   return (
     <div className='flex flex-col min-w-full min-h-screen p-4'>
-      <div className='bg-[#BCEAD5] min-h-full rounded-md p-4 space-y-4'>
+      <div>
+        <Link href={`/${user?.id}`}>
+          <span  className=' text-slate-500 hover:text-blue-500'>Go To My Message</span>
+        </Link>
+      </div>
+      <div className='bg-[#BCEAD5] min-h-full rounded-md p-4 space-y-4 mt-2'>
         <h1 className='text-center'>Copy this link below :</h1>
         <CopyToClipboard userId={`${user?.id}`} />
       </div>
