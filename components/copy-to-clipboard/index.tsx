@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { copyTextToClipboard } from '../../helpers/CopyTextToClipBoard';
+import { copyTextToClipboard } from '../../helpers';
 
 interface IUser {
   userId: string;
@@ -7,9 +7,9 @@ interface IUser {
 
 const CopyToClipboard: React.FC<IUser> = ({ userId }) => {
   const [copied, setCopied] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const handleCopyText = () => {
-    copyTextToClipboard(inputRef?.current?.value)
+    copyTextToClipboard(inputRef?.current?.value!)
       .then(() => setTimeout(() => setCopied(true), 250))
       .catch((error) => {
         throw new Error(error);
