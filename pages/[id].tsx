@@ -58,7 +58,8 @@ const QuestionPage: NextPage = () => {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
-        .eq('post_owner_id', id);
+        .eq('post_owner_id', id)
+        .order('created_at', { ascending: false });
 
       if (data) {
         setPosts(data);
