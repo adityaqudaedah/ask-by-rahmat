@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { copyTextToClipboard } from '../../helpers';
+import { copyTextToClipboard } from 'helpers';
 
 interface IUser {
   userId: string;

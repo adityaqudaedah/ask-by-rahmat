@@ -1,9 +1,9 @@
 //supabase import
 import { Auth, ThemeSupa } from '@supabase/auth-ui-react';
 import { useSupabaseClient, useSession } from '@supabase/auth-helpers-react';
-import HomePage from '../components/account';
-import Layout from '../components/layout';
-import Card from '../components/card';
+import HomePage from '@/components/account';
+import Layout from '@/components/layout';
+import Card from '@/components/card';
 
 const IndexPage = () => {
   const session = useSession();

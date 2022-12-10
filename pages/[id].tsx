@@ -3,15 +3,16 @@ import {
   useSupabaseClient,
   useUser,
 } from '@supabase/auth-helpers-react';
+import { useSubscription } from '@/hooks/useSubscription';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import Layout from '../components/layout';
-import MessageContent from '../components/mesasge-content';
-import Message from '../components/message';
-import MessageAction from '../components/message-action';
-import MeassageHeader from '../components/message-header';
-import TimeLine from '../components/timeline';
+import Layout from "@/components/layout"
+import MessageContent from '@/components/mesasge-content';
+import Message from '@/components/message';
+import MessageAction from '@/components/message-action';
+import MeassageHeader from '@/components/message-header';
+import TimeLine from '@/components/timeline';
 
 const QuestionPage: NextPage = () => {
   const supabase = useSupabaseClient();
@@ -107,10 +108,30 @@ const QuestionPage: NextPage = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    const postChanges = supabase
+      .channel('public:posts')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'posts' },
+        (payload) => {
+          console.log('ping !!!', payload);
+        }
+      );
+
+    postChanges.subscribe();
+
+    return () => {
+      postChanges.unsubscribe();
+    };
+  }, []);
+
   if (loading || !name)
     return (
       <Layout>
-        <h1 className='font-semibold text-md text-gray-500'>Loading...</h1>
+        <h1 className='font-semibold text-md text-gray-500 m-auto'>
+          Loading...
+        </h1>
       </Layout>
     );
 

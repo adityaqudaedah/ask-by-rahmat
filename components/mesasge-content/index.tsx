@@ -2,9 +2,9 @@ import React from 'react';
 
 const MessageContent = () => {
   return (
-    <div className='min-w-full text-center'>
+    <div className='max-w-full text-center'>
       <textarea
-        className='rounded-md p-4 text-gray-500 shadow-md focus:outline-none'
+        className='max-w-full rounded-md p-4 text-gray-500 shadow-md focus:outline-none'
         id='message'
         name='message'
         rows={4}
