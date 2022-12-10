@@ -7,14 +7,20 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import Layout from "@/components/layout"
+import Layout from '@/components/layout';
 import MessageContent from '@/components/mesasge-content';
 import Message from '@/components/message';
 import MessageAction from '@/components/message-action';
 import MeassageHeader from '@/components/message-header';
 import TimeLine from '@/components/timeline';
+import Spinner from '@/components/spinner';
 
 const QuestionPage: NextPage = () => {
+  const { data } = useSubscription({
+    event: 'INSERT',
+    table: 'posts',
+    schema: 'public',
+  });
   const supabase = useSupabaseClient();
   const session = useSession();
   const [posts, setPosts] = useState<any[]>([]);
@@ -104,29 +110,13 @@ const QuestionPage: NextPage = () => {
   useEffect(() => {
     if (id) {
       getName();
-      getPost();
+      if (data) {
+        getPost();
+      }
     }
-  }, [id]);
+  }, [id, data]);
 
-  useEffect(() => {
-    const postChanges = supabase
-      .channel('public:posts')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'posts' },
-        (payload) => {
-          console.log('ping !!!', payload);
-        }
-      );
-
-    postChanges.subscribe();
-
-    return () => {
-      postChanges.unsubscribe();
-    };
-  }, []);
-
-  if (loading || !name)
+  if (loading && !name)
     return (
       <Layout>
         <h1 className='font-semibold text-md text-gray-500 m-auto'>
@@ -137,7 +127,8 @@ const QuestionPage: NextPage = () => {
 
   return (
     <Layout>
-      {!session && (
+      <section className='px-2'>
+      {!session && (    
         <Message handleSubmit={handleOnSubmit}>
           <MeassageHeader name={name ?? 'unknown'} />
           <MessageContent />
@@ -145,6 +136,8 @@ const QuestionPage: NextPage = () => {
         </Message>
       )}
       <TimeLine posts={posts} />
+      </section>
+      
     </Layout>
   );
 };
