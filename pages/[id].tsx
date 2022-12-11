@@ -1,19 +1,19 @@
-import {
-  useSession,
-  useSupabaseClient,
-  useUser,
-} from '@supabase/auth-helpers-react';
-import { useSubscription } from '@/hooks/useSubscription';
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
 import Layout from '@/components/layout';
 import MessageContent from '@/components/mesasge-content';
 import Message from '@/components/message';
 import MessageAction from '@/components/message-action';
 import MeassageHeader from '@/components/message-header';
 import TimeLine from '@/components/timeline';
-import Spinner from '@/components/spinner';
+import { useSubscription } from '@/hooks/useSubscription';
+import {
+  useSession,
+  useSupabaseClient,
+  useUser
+} from '@supabase/auth-helpers-react';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { Database } from 'types';
 
 const QuestionPage: NextPage = () => {
   const { data } = useSubscription({
@@ -21,25 +21,24 @@ const QuestionPage: NextPage = () => {
     table: 'posts',
     schema: 'public',
   });
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient<Database>();
   const session = useSession();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [name, setName] = useState<string>();
-  const user = useUser();
+  const [name, setName] = useState<string | null>(null);
   const router = useRouter();
   const {
     query: { id },
   } = router;
 
-  //get username
-  const getName = async () => {
+  //get full name
+  const getFullNameByUserId = async (userId: string | Array<string>) => {
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', id);
+        .eq('id', userId);
 
       if (!data) {
         router.push('/404');
@@ -49,7 +48,7 @@ const QuestionPage: NextPage = () => {
       }
 
       if (data) {
-        setName(data[0]?.full_name);
+        setName(data[0].full_name);
       }
     } catch (error: any) {
       throw new Error(error);
@@ -87,7 +86,7 @@ const QuestionPage: NextPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('posts')
-        .insert([{ post_owner_id: id, message }]);
+        .insert({ post_owner_id: id as string, message });
 
       if (error) {
         console.log(error);
@@ -109,7 +108,7 @@ const QuestionPage: NextPage = () => {
 
   useEffect(() => {
     if (id) {
-      getName();
+      getFullNameByUserId(id);
       if (data) {
         getPost();
       }
@@ -128,16 +127,15 @@ const QuestionPage: NextPage = () => {
   return (
     <Layout>
       <section className='px-2'>
-      {!session && (    
-        <Message handleSubmit={handleOnSubmit}>
-          <MeassageHeader name={name ?? 'unknown'} />
-          <MessageContent />
-          <MessageAction loading={loading} />
-        </Message>
-      )}
-      <TimeLine posts={posts} />
+        {!session && (
+          <Message handleSubmit={handleOnSubmit}>
+            <MeassageHeader name={name ?? 'unknown'} />
+            <MessageContent />
+            <MessageAction loading={loading} />
+          </Message>
+        )}
+        <TimeLine posts={posts} />
       </section>
-      
     </Layout>
   );
 };

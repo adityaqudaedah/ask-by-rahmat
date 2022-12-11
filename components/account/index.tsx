@@ -7,34 +7,10 @@ import {
 import Link from 'next/link';
 import CopyToClipboard from '@/components/copy-to-clipboard';
 
+
 const HomePage = ({ session }: { session: Session }) => {
   const supabase = useSupabaseClient();
   const user = useUser();
-
-  // // get profiles
-  // async function getProfile() {
-  //   try {
-  //     setLoading(true);
-  //     let { data, error, status } = await supabase
-  //       .from('profiles')
-  //       .select(`id,username,avatar_url`)
-  //       .eq('id', user?.id)
-  //       .single();
-
-  //     if (error && status !== 406) {
-  //       throw error;
-  //     }
-
-  //     if (data) {
-  //       setUsername(data.username);
-  //     }
-  //   } catch (error) {
-  //     alert('Error loading user data!');
-  //     console.log(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
 
   const handleLogout = () => {
     supabase.auth.signOut();
@@ -43,6 +19,9 @@ const HomePage = ({ session }: { session: Session }) => {
   return (
     <div className='flex flex-col min-w-full min-h-screen p-4'>
       <div>
+        <div className='w-full'>
+          <h1>Hello world</h1>
+        </div>
         <Link href={`/${user?.id}`}>
           <span className='text-slate-500 hover:text-blue-500 mx-auto'>
             Go To My Message
