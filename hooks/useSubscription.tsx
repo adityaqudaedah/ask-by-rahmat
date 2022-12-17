@@ -3,7 +3,7 @@ import { RealtimePostgresChangesFilter } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
 export const useSubscription = (
-  configs: RealtimePostgresChangesFilter<string> = {
+  configs: RealtimePostgresChangesFilter<string | any> = {
     event: '*',
     table: '*',
     schema: 'public',
