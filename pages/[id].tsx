@@ -19,7 +19,8 @@ const QuestionPage: NextPage = () => {
   });
   const supabase = useSupabaseClient<Database>();
   const user = useUser();
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] =
+    useState<Array<Database['public']['Tables']['posts']['Row']>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
   const router = useRouter();
@@ -130,7 +131,7 @@ const QuestionPage: NextPage = () => {
             <MessageAction loading={loading} />
           </Message>
         )}
-        <TimeLine posts={posts} />
+        <TimeLine posts={posts!} />
       </section>
     </Layout>
   );
