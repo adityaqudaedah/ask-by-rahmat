@@ -22,7 +22,7 @@ const CopyToClipboard: React.FC<IUser> = ({ userId }) => {
           ref={inputRef}
           className='text-slate-500 w-full focus:outline-none'
           readOnly
-          value={`${process.env.NEXT_PUBLIC_LOCAL_URL}/${userId}`}
+          value={`${process.env.NEXT_PUBLIC_ASK_BY_RAHMAT_APP_URL}/${userId}`}
         />
       </div>
 
