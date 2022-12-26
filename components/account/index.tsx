@@ -1,18 +1,19 @@
 /* eslint-disable react/no-unescaped-entities */
 //supabase import
-import {
-  Session,
-  useSupabaseClient,
-  useUser,
-} from '@supabase/auth-helpers-react';
-import { useState } from 'react';
-import Link from 'next/link';
 import CopyToClipboard from '@/components/copy-to-clipboard';
 import NameInput from '@/components/inputs/NameInput';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { Database } from 'types';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-const HomePage = ({ session }: { session: Session }) => {
+const HomePage = () => {
   const [toggleEditName, setToggleEditName] = useState<boolean>(false);
-  const supabase = useSupabaseClient();
+  const [name, setName] = useState<string | null>(null);
+  const router = useRouter();
+  const { id } = router.query;
+  const supabase = useSupabaseClient<Database>();
   const user = useUser();
 
   const handleLogout = () => {
@@ -21,13 +22,44 @@ const HomePage = ({ session }: { session: Session }) => {
 
   const handleOnEditName = () => {
     // check is toggleEditName true
-    if (toggleEditName) {
-      console.log('submit data');
-
-      setTimeout(() => setToggleEditName(false), 500);
+    if (toggleEditName && id?.length !== 0) {
+      postProfile()
+        .then((res) => setToggleEditName(false))
+        .then((res) => getProfile(user?.id!));
     }
     setToggleEditName(true);
   };
+
+  // post profile
+  const postProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ full_name: name, username: name })
+        .eq('id', user?.id!);
+      if (error) alert(error.message);
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
+  // get profile
+  const getProfile = async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', id as string);
+      if (!data) router.push('/');
+      if (error) console.log(error);
+      if (data) setName(data[0]?.full_name);
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
+
+  useEffect(() => {
+    getProfile(user?.id!);
+  }, []);
 
   return (
     <div className='flex flex-col min-w-full min-h-screen p-4 text-center space-y-8'>
@@ -35,13 +67,14 @@ const HomePage = ({ session }: { session: Session }) => {
       <div className='w-full mt-4'>
         <div>
           {/* name input */}
-          <h1 className='font-semibold text-orange-400 animate-bounce'>
-            Please Insert Your Name!
+          <h1 className='font-semibold text-orange-400'>
+            {name ? `Hello, ${name}` : `Please Insert Your Name!`}
           </h1>
           <div className='flex flex-row justify-center space-x-2 mt-2 mb-4'>
             <NameInput
               disable={!toggleEditName ? 'true' : 'false'}
-              value='Rahmat Aditya'
+              name={name!}
+              setName={setName}
             />
             <button
               onClick={handleOnEditName}
