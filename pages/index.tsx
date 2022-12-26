@@ -20,7 +20,7 @@ const IndexPage = () => {
         </div>
       ) : (
         <Layout>
-          <HomePage session={session} />
+          <HomePage />
         </Layout>
       )}
     </>
