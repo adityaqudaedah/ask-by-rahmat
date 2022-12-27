@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 
 const NameInput: React.FC<{
   disable: 'true' | 'false' | undefined;
-  value: string;
-}> = ({ disable, value }) => {
-  const [currentValue, setCurrentValue] = useState(value);
+  name: string;
+  setName: Dispatch<SetStateAction<string|null>>;
+}> = ({ disable, name, setName }) => {
   return (
     <input
-      onChange={(event) => setCurrentValue(event.target.value)}
-      value={currentValue}
+      onChange={(event) => setName(event.target.value)}
+      value={name}
       aria-disabled={disable}
       disabled={disable === 'true' ? true : false}
       type='text'

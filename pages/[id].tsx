@@ -5,11 +5,7 @@ import MessageAction from '@/components/message-action';
 import MeassageHeader from '@/components/message-header';
 import TimeLine from '@/components/timeline';
 import { useSubscription } from '@/hooks/useSubscription';
-import {
-  useSession,
-  useSupabaseClient,
-  useUser
-} from '@supabase/auth-helpers-react';
+import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -22,8 +18,9 @@ const QuestionPage: NextPage = () => {
     schema: 'public',
   });
   const supabase = useSupabaseClient<Database>();
-  const session = useSession();
-  const [posts, setPosts] = useState<any[]>([]);
+  const user = useUser();
+  const [posts, setPosts] =
+    useState<Array<Database['public']['Tables']['posts']['Row']>>();
   const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string | null>(null);
   const router = useRouter();
@@ -115,7 +112,7 @@ const QuestionPage: NextPage = () => {
     }
   }, [id, data]);
 
-  if (loading && !name)
+  if (loading && !name && !id)
     return (
       <Layout>
         <h1 className='font-semibold text-md text-gray-500 m-auto'>
@@ -127,14 +124,14 @@ const QuestionPage: NextPage = () => {
   return (
     <Layout>
       <section className='px-2'>
-        {!session && (
+        {user?.id !== id && (
           <Message handleSubmit={handleOnSubmit}>
             <MeassageHeader name={name ?? 'unknown'} />
             <MessageContent />
             <MessageAction loading={loading} />
           </Message>
         )}
-        <TimeLine posts={posts} />
+        <TimeLine posts={posts!} />
       </section>
     </Layout>
   );
